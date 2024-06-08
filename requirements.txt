@@ -1,0 +1,5 @@
+plotly
+streamlit
+datetime
+sqlite3
+pytz
