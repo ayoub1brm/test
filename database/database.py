@@ -43,7 +43,7 @@ class Database:
 
 
     def create_tables(self):
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS Members (
                 member_id INTEGER,
                 username TEXT,
@@ -56,13 +56,13 @@ class Database:
                 FOREIGN KEY (role_id) REFERENCES Roles(role_id)
             )
         ''')
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS Roles (
                 role_id INTEGER PRIMARY KEY,
                 role_name TEXT
             )
         ''')
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS VoiceActivity (
                 activity_id INTEGER PRIMARY KEY,
                 member_id INTEGER,
@@ -73,7 +73,7 @@ class Database:
                 FOREIGN KEY (member_id) REFERENCES Members(member_id)
             )
         ''')
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS Messages (
                 message_id INTEGER PRIMARY KEY,
                 channel_id INTEGER,
@@ -85,7 +85,7 @@ class Database:
                 FOREIGN KEY (member_id) REFERENCES Members(member_id)
             )
         ''')
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS WelcomeMessages (
                 message_id INTEGER PRIMARY KEY,
                 member_id INTEGER,
@@ -93,13 +93,13 @@ class Database:
                 timestamp DATETIME
             )
         ''')
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS Channels (
                 channel_id INTEGER PRIMARY KEY,
                 channel_name TEXT
             )
         ''')
-        self.cursor.execute('''
+        self.execute('''
             CREATE TABLE IF NOT EXISTS Invites (
                 code TEXT PRIMARY KEY,
                 uses INTEGER,
@@ -107,48 +107,42 @@ class Database:
                 created_at TIMESTAMP
             )
         ''')
-        self.conn.commit()
     
     def insert_invite(self, code, uses, inviter_id, created_at):
-        self.cursor.execute('''
+        self.execute('''
             INSERT OR REPLACE INTO Invites (code, uses, inviter_id, created_at)
             VALUES (?, ?, ?, ?)
         ''', (code, uses, inviter_id, created_at))
-        self.conn.commit()
 
     def update_invite_uses(self, code, uses):
-        self.cursor.execute('''
+        self.execute('''
             UPDATE Invites
             SET uses = ?
             WHERE code = ?
         ''', (uses, code))
-        self.conn.commit()
 
     def delete_invite(self, code):
-        self.cursor.execute('DELETE FROM Invites WHERE code = ?', (code,))
-        self.conn.commit()
+        self.execute('DELETE FROM Invites WHERE code = ?', (code,))
 
     def get_invite_uses(self, code):
-        self.cursor.execute('SELECT uses FROM Invites WHERE code = ?', (code,))
-        return self.cursor.fetchone()
+        cursor = self.execute('SELECT uses FROM Invites WHERE code = ?', (code,))
+        return cursor.fetchone()
 
     def get_all_invites(self):
-        self.cursor.execute('SELECT code, uses FROM Invites')
-        return self.cursor.fetchall()
+        cursor =  self.execute('SELECT code, uses FROM Invites')
+        return cursor.fetchall()
 
     def insert_member(self, member_data):
-        self.cursor.execute('''
+        self.execute('''
             INSERT INTO Members (member_id, username, discriminator, join_date, leave_date, is_bot, activity_status, role_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ''', member_data)
-        self.conn.commit()
 
     def insert_role(self, role_data):
-        self.cursor.execute('''
+        self.execute('''
             INSERT INTO Roles (role_id, role_name)
             VALUES (?, ?)
         ''', role_data)
-        self.conn.commit()
 
     def insert_voice_activity(self, activity_data):
         self.cursor.execute('''
@@ -158,61 +152,56 @@ class Database:
         self.conn.commit()
 
     def insert_message(self, message_data):
-        self.cursor.execute('''
+        self.execute('''
             INSERT INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', message_data)
-        self.conn.commit()
     
     def insert_welcome_message(self, message_data):
-        self.cursor.execute('''
+        self.execute('''
             INSERT INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
             VALUES (?, ?, ?, ?)
         ''', message_data)
-        self.conn.commit()
     
     def insert_channel(self, channel_id, channel_name):
-        self.cursor.execute('''
+        self.execute('''
             INSERT OR IGNORE INTO Channels (channel_id, channel_name)
             VALUES (?, ?)
         ''', (channel_id, channel_name))
-        self.conn.commit()
 
     def get_channels(self):
-        self.cursor.execute('SELECT channel_id, channel_name FROM Channels')
-        return self.cursor.fetchall()
+        cursor = self.execute('SELECT channel_id, channel_name FROM Channels')
+        return cursor.fetchall()
 
     def update_member_leave_date(self, member_id, leave_date):
-        self.cursor.execute('''
+        self.execute('''
             UPDATE Members SET leave_date = ? WHERE member_id = ?
         ''', (leave_date, member_id))
-        self.conn.commit()
 
     def update_voice_activity_end_time(self, member_id, end_time):
-        self.cursor.execute('''
+        self.execute('''
             UPDATE VoiceActivity SET end_time = ? WHERE member_id = ? AND end_time IS NULL
         ''', (end_time, member_id))
-        self.conn.commit()
 
     def has_data(self):
-        self.cursor.execute("SELECT * FROM Members LIMIT 1")
-        return bool(self.cursor.fetchone())
+        cursor = self.execute("SELECT * FROM Members LIMIT 1")
+        return bool(cursor.fetchone())
 
     def get_total_member_count(self):
-        self.cursor.execute('''
+        cursor = self.execute('''
             SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id) WHERE leave_date is NULL AND is_bot = 0
         ''')
-        return self.cursor.fetchone()[0]
+        return cursor.fetchone()[0]
     
     def get_role_distribution(self):
-        self.cursor.execute('''
+        cursor = self.execute('''
             SELECT Roles.role_name, COUNT(Members.member_id) 
             FROM Members 
             JOIN Roles ON Members.role_id = Roles.role_id
             WHERE Members.is_bot = 0
             GROUP BY Roles.role_name
         ''')
-        return self.cursor.fetchall()
+        return cursor.fetchall()
 
     def get_member_count_with_role(self, role_name):
         query = '''
@@ -221,8 +210,8 @@ class Database:
             WHERE Roles.role_name = ? AND Members.leave_date is NULL AND Members.is_bot = 0
         '''
         params = [role_name]
-        self.cursor.execute(query, params)
-        return self.cursor.fetchone()[0]
+        cursor = self.execute(query, params)
+        return cursor.fetchone()[0]
 
     def get_human_bot_count(self, start_date=None, end_date=None):
         query = '''
@@ -235,8 +224,8 @@ class Database:
         if start_date and end_date:
             query += ' WHERE join_date BETWEEN ? AND ?'
             params.extend([start_date, end_date])
-        self.cursor.execute(query, params)
-        return self.cursor.fetchone()
+        cursor = self.execute(query, params)
+        return cursor.fetchone()
     
     def get_welcome_messages_between_dates(self, start_date=None, end_date=None):
         params = []
@@ -246,8 +235,8 @@ class Database:
         if start_date and end_date:
             params = [start_date, end_date]
             query += '''WHERE timestamp BETWEEN ? AND ?'''
-        self.cursor.execute(query,params)
-        return self.cursor.fetchall()
+        cursor = self.execute(query,params)
+        return cursor.fetchall()
     
     def get_current_members(self,start=None,end=None):
         params = []
@@ -258,8 +247,8 @@ class Database:
         if start and end:
             params = [start,end]
             query += '''AND join_date BETWEEN ? and ?'''
-        self.cursor.execute(query,params)
-        return self.cursor.fetchone()[0]
+        cursor = self.execute(query,params)
+        return cursor.fetchone()[0]
 
     def get_members_left(self, start_date=None, end_date=None):
         query = '''
@@ -271,8 +260,8 @@ class Database:
         if start_date and end_date:
             query += ' AND leave_date BETWEEN ? AND ?'
             params.extend([start_date, end_date])
-        self.cursor.execute(query, params)
-        return self.cursor.fetchone()[0]
+        cursor = self.execute(query, params)
+        return cursor.fetchone()[0]
 
     def get_member_join_events_across_time(self, start_date=None, end_date=None):
         query = '''
@@ -285,16 +274,16 @@ class Database:
             query += ' AND join_date BETWEEN ? AND ?'
             params.extend([start_date, end_date])
         query += ' GROUP BY join_date ORDER BY join_date'
-        self.cursor.execute(query, params)
-        return self.cursor.fetchall()
+        cursor = self.execute(query, params)
+        return cursor.fetchall()
 
     def get_active_member_count(self, start_date=None, end_date=None):
         query = '''
             SELECT COUNT(DISTINCT member_id) FROM MemberActivity
             WHERE activity_date BETWEEN ? AND ?
         '''
-        self.cursor.execute(query, (start_date, end_date))
-        return self.cursor.fetchone()[0]
+        cursor = self.execute(query, (start_date, end_date))
+        return cursor.fetchone()[0]
 
     def get_channel_message_counts(self, start_date=None, end_date=None):
         query = '''
@@ -303,8 +292,8 @@ class Database:
             WHERE timestamp BETWEEN ? AND ?
             GROUP BY channel_id
         '''
-        self.cursor.execute(query, (start_date, end_date))
-        return dict(self.cursor.fetchall())
+        cursor = self.execute(query, (start_date, end_date))
+        return dict(cursor.fetchall())
     
     def get_joined_since(self,start=None,end=None):
         query = '''
@@ -314,13 +303,13 @@ class Database:
         if start and end:
             query += ' WHERE timestamp BETWEEN ? AND ?'
             params.extend([start, end])
-        self.cursor.execute(query, params)
-        return self.cursor.fetchone()[0]
+        cursor = self.execute(query, params)
+        return cursor.fetchone()[0]
 
     
     def get_roles(self):
-        self.cursor.execute('SELECT role_name FROM Roles')
-        return [row[0] for row in self.cursor.fetchall()]
+        cursor = self.execute('SELECT role_name FROM Roles')
+        return [row[0] for row in cursor.fetchall()]
     
     def get_message_activity_by_channel(self,start_date=None, end_date=None):
         query = '''
@@ -333,8 +322,8 @@ class Database:
             params = [start_date,end_date]
         query +=''' GROUP BY Channels.channel_name, date
                 '''
-        self.cursor.execute(query, params)
-        return self.cursor.fetchall()
+        cursor = self.execute(query, params)
+        return cursor.fetchall()
 
     def get_top_channels(self,start_date=None, end_date=None, top_n=None):
         params = []
@@ -352,24 +341,24 @@ class Database:
             query += ''' LIMIT ?
                 '''
             params.append(top_n)
-        self.cursor.execute(query,params)
-        return self.cursor.fetchall()
+        cursor = self.execute(query,params)
+        return cursor.fetchall()
 
     def get_latest_member_joined_at(self):
-        self.cursor.execute('SELECT MAX(join_date) FROM Members')
-        return self.cursor.fetchone()[0]
+        cursor = self.execute('SELECT MAX(join_date) FROM Members')
+        return cursor.fetchone()[0]
 
     def get_latest_audit_log_created_at(self):
-        self.cursor.execute('SELECT MAX(timestamp) FROM AuditLogs')
-        return self.cursor.fetchone()[0]
+        cursor = self.execute('SELECT MAX(timestamp) FROM AuditLogs')
+        return cursor.fetchone()[0]
 
     def get_latest_message_timestamp(self):
-        self.cursor.execute('SELECT MAX(timestamp) FROM Messages')
-        return self.cursor.fetchone()[0]
+        cursor = self.execute('SELECT MAX(timestamp) FROM Messages')
+        return cursor.fetchone()[0]
 
     def get_latest_voice_activity_join_time(self):
-        self.cursor.execute('SELECT MAX(start_time) FROM VoiceActivity')
-        return self.cursor.fetchone()[0]
+        cursor = self.execute('SELECT MAX(start_time) FROM VoiceActivity')
+        return cursor.fetchone()[0]
     
     def get_member_back_7_14(self,start_date=None,end_date=None):
         params = []
@@ -387,8 +376,8 @@ class Database:
         
         query += '''GROUP BY member_id
                 HAVING maximum BETWEEN datetime(join_date,'+7 days') AND datetime(join_date,'+14 days') OR minimum BETWEEN datetime(join_date,'+7 days') AND datetime(join_date,'+14 days'))'''
-        self.cursor.execute(query,params)
-        return self.cursor.fetchone()[0]
+        cursor = self.execute(query,params)
+        return cursor.fetchone()[0]
 
     def close(self):
         self.conn.close()
