@@ -143,8 +143,8 @@ class DiscordBot(commands.Bot):
         self.db.insert_reaction(*reaction_data)
 
     def get_role_id(self, role):
-        self.db.cursor.execute('SELECT role_id FROM Roles WHERE role_name = ?', (role.name,))
-        result = self.db.cursor.fetchone()
+        cursor = self.db.execute('SELECT role_id FROM Roles WHERE role_name = ?', (role.name,))
+        result = cursor.fetchone()
         return result[0] if result else None
 
     async def update_server_data(self):
