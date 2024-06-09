@@ -1,4 +1,5 @@
 import streamlit as st
+from discord_bot.discord_bot import setup_discord_bot
 from datetime import datetime, timedelta
 from visualizations.total_members import total_members_chart
 from visualizations.members_with_role import members_with_role_chart
