@@ -338,7 +338,10 @@ class Database:
 
     def get_latest_member_joined_at(self):
         cursor = self.execute('SELECT MAX(join_date) FROM Members')
-        return cursor.fetchone()[0]
+        result = cursor.fetchone()[0]
+        if result:
+            return datetime.fromisoformat(result)
+        return None
 
     def get_latest_audit_log_created_at(self):
         cursor = self.execute('SELECT MAX(timestamp) FROM AuditLogs')
