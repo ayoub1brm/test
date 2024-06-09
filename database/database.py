@@ -134,7 +134,7 @@ class Database:
 
     def insert_member(self, member_data):
         self.execute('''
-             INSERT OR IGNORE INTO Members (member_id, username, discriminator, join_date, leave_date, is_bot, activity_status, role_id)
+             INSERT INTO Members (member_id, username, discriminator, join_date, leave_date, is_bot, activity_status, role_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ''', member_data)
 
@@ -153,7 +153,7 @@ class Database:
 
     def insert_message(self, message_data):
         self.execute('''
-            INSERT INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
+            INSERT OR IGNORE INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', message_data)
     
