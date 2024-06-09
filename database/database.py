@@ -2,7 +2,7 @@ __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from threading import Lock
 
 class Database:
