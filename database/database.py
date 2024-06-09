@@ -140,7 +140,7 @@ class Database:
 
     def insert_role(self, role_data):
         self.execute('''
-            INSERT INTO Roles (role_id, role_name)
+            INSERT OR IGNORE INTO Roles (role_id, role_name)
             VALUES (?, ?)
         ''', role_data)
 
