@@ -15,16 +15,31 @@ from database.database import Database
 from streamlit_extras.stylable_container import stylable_container
 import altair as alt
 import os
+import threading
+import os
+import subprocess
+from discord_bot.discord_bot import setup_discord_bot
+from database.database import Database
 
 # Initialize database
 db = Database('discord_bot.db')
 
 discord_token = os.getenv('DISCORD_TOKEN')
 
+def run_streamlit():
+    os.system('streamlit run app.py')
+
 def run_discord_bot():
     setup_discord_bot(discord_token)
 
+
+# Run Streamlit app in a separate thread
+streamlit_thread = threading.Thread(target=run_streamlit)
+streamlit_thread.start()
+
+# Run Discord bot
 run_discord_bot()
+
 roles = db.get_roles()
 
 # Set up page configuration
