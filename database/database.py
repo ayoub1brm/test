@@ -298,6 +298,16 @@ class Database:
         cursor = self.execute(query, params)
         return cursor.fetchone()[0]
 
+    def get_latest_message_id_for_channel(self, channel_id):
+        cursor = self.execute('''
+            SELECT message_id 
+            FROM Messages 
+            WHERE channel_id = ? 
+            ORDER BY timestamp DESC 
+            LIMIT 1
+        ''', (channel_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None
     
     def get_roles(self):
         cursor = self.execute('SELECT role_name FROM Roles')
