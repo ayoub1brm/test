@@ -13,9 +13,17 @@ from visualizations.channel_activity_line import channel_activity_line_chart
 from database.database import Database
 from streamlit_extras.stylable_container import stylable_container
 import altair as alt
+import os
 
 # Initialize database
 db = Database('discord_bot.db')
+
+discord_token = os.getenv('DISCORD_TOKEN')
+
+def run_discord_bot():
+    setup_discord_bot(discord_token)
+
+run_discord_bot()
 roles = db.get_roles()
 
 # Set up page configuration
