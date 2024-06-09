@@ -41,6 +41,7 @@ class DiscordBot(commands.Bot):
 
             # Fetch and insert new messages by channel
             for channel in guild.text_channels:
+                latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                 async for message in channel.history(limit=None, after=latest_message_timestamp):
                     created_at = message.created_at.astimezone(self.tz)
                     message_data = (
@@ -50,6 +51,7 @@ class DiscordBot(commands.Bot):
                     self.db.insert_message(message_data)
 
             for channel in guild.voice_channels:
+                latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                 async for message in channel.history(limit=None, after=latest_message_timestamp):
                     created_at = message.created_at.astimezone(self.tz)
                     message_data = (
