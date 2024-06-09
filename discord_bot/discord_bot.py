@@ -65,6 +65,8 @@ class DiscordBot(commands.Bot):
             bienvenue_channel_pattern = re.compile(r"bienvenue", re.IGNORECASE)
             for channel in guild.text_channels:
                 if bienvenue_channel_pattern.search(channel.name):
+                    latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
+                    after = discord.Object(id=latest_message_id) if latest_message_id else None
                     async for message in channel.history(limit=None, after=latest_message_timestamp):
                         created_at = message.created_at.astimezone(self.tz)
                         welcome_message_data = (
