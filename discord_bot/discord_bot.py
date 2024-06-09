@@ -43,7 +43,7 @@ class DiscordBot(commands.Bot):
             for channel in guild.text_channels:
                 latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                 after = discord.Object(id=latest_message_id) if latest_message_id else None
-                async for message in channel.history(limit=None, after=latest_message_timestamp):
+                async for message in channel.history(limit=None, after=after):
                     created_at = message.created_at.astimezone(self.tz)
                     message_data = (
                         message.id, message.channel.id, f'{channel.type}', message.author.id,
@@ -54,7 +54,7 @@ class DiscordBot(commands.Bot):
             for channel in guild.voice_channels:
                 latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                 after = discord.Object(id=latest_message_id) if latest_message_id else None
-                async for message in channel.history(limit=None, after=latest_message_timestamp):
+                async for message in channel.history(limit=None, after=after):
                     created_at = message.created_at.astimezone(self.tz)
                     message_data = (
                         message.id, message.channel.id, f'{channel.type}', message.author.id,
@@ -67,7 +67,7 @@ class DiscordBot(commands.Bot):
                 if bienvenue_channel_pattern.search(channel.name):
                     latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                     after = discord.Object(id=latest_message_id) if latest_message_id else None
-                    async for message in channel.history(limit=None, after=latest_message_timestamp):
+                    async for message in channel.history(limit=None, after=after):
                         created_at = message.created_at.astimezone(self.tz)
                         welcome_message_data = (
                             message.id, message.mentions[0].id if message.mentions else None, message.content, created_at
