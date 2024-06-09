@@ -20,7 +20,6 @@ class DiscordBot(commands.Bot):
     async def update_initial_data(self):
         for guild in self.guilds:
             latest_member_joined_at = self.db.get_latest_member_joined_at()
-            latest_audit_log_created_at = self.db.get_latest_audit_log_created_at()
             latest_message_timestamp = self.db.get_latest_message_timestamp()
 
             for role in guild.roles:
@@ -39,14 +38,6 @@ class DiscordBot(commands.Bot):
                             self.get_role_id(role)
                         )
                         self.db.insert_member(member_data)
-
-            # Fetch and insert new audit logs
-            async for entry in guild.audit_logs(limit=None, after=latest_audit_log_created_at):
-                created_at = entry.created_at.astimezone(self.tz)
-                log_data = (
-                    entry.id, entry.action.name, entry.user.id, created_at
-                )
-                self.db.insert_audit_log(log_data)
 
             # Fetch and insert new messages by channel
             for channel in guild.text_channels:
