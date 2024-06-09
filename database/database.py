@@ -277,14 +277,6 @@ class Database:
         cursor = self.execute(query, params)
         return cursor.fetchall()
 
-    def get_active_member_count(self, start_date=None, end_date=None):
-        query = '''
-            SELECT COUNT(DISTINCT member_id) FROM MemberActivity
-            WHERE activity_date BETWEEN ? AND ?
-        '''
-        cursor = self.execute(query, (start_date, end_date))
-        return cursor.fetchone()[0]
-
     def get_channel_message_counts(self, start_date=None, end_date=None):
         query = '''
             SELECT channel_id, COUNT(*) AS message_count
@@ -378,6 +370,3 @@ class Database:
                 HAVING maximum BETWEEN datetime(join_date,'+7 days') AND datetime(join_date,'+14 days') OR minimum BETWEEN datetime(join_date,'+7 days') AND datetime(join_date,'+14 days'))'''
         cursor = self.execute(query,params)
         return cursor.fetchone()[0]
-
-    def close(self):
-        self.conn.close()
