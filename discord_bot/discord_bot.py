@@ -67,6 +67,7 @@ class DiscordBot(commands.Bot):
                 if bienvenue_channel_pattern.search(channel.name):
                     latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                     after = discord.Object(id=latest_message_id) if latest_message_id else None
+                    await asyncio.sleep(10)
                     async for message in channel.history(limit=None, after=after):
                         created_at = message.created_at.astimezone(self.tz)
                         welcome_message_data = (
