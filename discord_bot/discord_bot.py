@@ -7,8 +7,8 @@ import pytz
 import re
 
 class DiscordBot(commands.Bot):
-    def __init__(self, command_prefix, intents, db):
-        super().__init__(command_prefix=command_prefix, intents=intents)
+    def __init__(self, intents, db):
+        super().__init__(intents=intents)
         self.db = db
         self.tz = pytz.timezone('Europe/Paris')
 
