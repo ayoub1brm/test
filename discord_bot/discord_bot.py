@@ -7,8 +7,8 @@ import pytz
 import re
 
 class DiscordBot(commands.Bot):
-    def __init__(self, intents, db):
-        super().__init__(intents=intents)
+    def __init__(self, command_prefix, intents, db):
+        super().__init__(command_prefix=command_prefix, intents=intents)
         self.db = db
         self.tz = pytz.timezone('Europe/Paris')
 
@@ -163,5 +163,5 @@ def setup_discord_bot(token):
     db = Database('discord_bot.db')
     db.create_tables()
     intents = discord.Intents.all()
-    bot = DiscordBot(intents=intents, db=db)
+    bot = DiscordBot(command_prefix='', intents=intents, db=db)
     bot.run(token)
