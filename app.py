@@ -26,13 +26,20 @@ db = Database('discord_bot.db')
 
 discord_token = os.getenv('DISCORD_TOKEN')
 
+# Path to the flag file
+FLAG_FILE_PATH = '/tmp/discord_bot_started.flag'
+
 def run_discord_bot():
     setup_discord_bot(discord_token)
+    # Create the flag file to indicate the bot has started
+    with open(FLAG_FILE_PATH, 'w') as flag_file:
+        flag_file.write('Bot has started.')
 
-
-# Run Streamlit app in a separate thread
-streamlit_thread = threading.Thread(target=run_discord_bot)
-streamlit_thread.start()
+# Check if the bot has already been started by looking for the flag file
+if not os.path.exists(FLAG_FILE_PATH):
+    # Start the bot in a separate thread if the flag file doesn't exist
+    bot_thread = threading.Thread(target=run_discord_bot)
+    bot_thread.start()
 
 roles = db.get_roles()
 
