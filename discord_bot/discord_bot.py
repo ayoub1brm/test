@@ -41,12 +41,12 @@ class DiscordBot(commands.Bot):
                     await self.batch_fetch_welcome_messages(channel)
 
     async def batch_insert_roles(self, roles):
-        role_data = [(role.id, role.name) for role in roles]
-        await self.db.batch_insert_role(role_data)
+        role_data_list = [(role.id, role.name) for role in roles]
+        self.db.batch_insert_role(role_data_list)
 
     async def batch_insert_channels(self, channels):
         channel_data = [(channel.id, channel.name) for channel in channels]
-        await self.db.batch_insert_channel(channel_data)
+        self.db.batch_insert_channel(channel_data)
 
     async def batch_insert_members(self, members, latest_member_joined_at):
         member_data = []
@@ -59,7 +59,7 @@ class DiscordBot(commands.Bot):
                         joined_at, None, int(member.bot), "active",
                         self.get_role_id(role)
                     ))
-        await self.db.batch_insert_member(member_data)
+        self.db.batch_insert_member(member_data)
 
     async def batch_fetch_messages(self, channels, latest_message_timestamp):
         for channel in channels:
