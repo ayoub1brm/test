@@ -71,7 +71,7 @@ class DiscordBot(commands.Bot):
                     message.id, message.channel.id, f'{channel.type}', message.author.id,
                     message.content, created_at
                 )
-                await self.db.batch_insert_message([message_data])
+                self.db.batch_insert_message([message_data])
                 self.cache['messages'][channel.id] = message.id
 
     async def batch_fetch_welcome_messages(self, channel):
@@ -82,7 +82,7 @@ class DiscordBot(commands.Bot):
             welcome_message_data = (
                 message.id, message.mentions[0].id if message.mentions else None, message.content, created_at
             )
-            await self.db.batch_insert_welcome_message([welcome_message_data])
+            self.db.batch_insert_welcome_message([welcome_message_data])
             self.cache['messages'][channel.id] = message.id
 
     async def on_member_join(self, member):
