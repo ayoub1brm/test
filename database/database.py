@@ -401,14 +401,14 @@ class Database:
     def batch_insert_message(self, message_data_list):
         for message_data in message_data_list:
             self.execute('''
-                INSERT INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
+                INSERT OR IGNORE INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', message_data)
 
     def batch_insert_welcome_message(self, welcome_message_data_list):
         for welcome_message_data in welcome_message_data_list:
             self.execute('''
-                INSERT INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
+                INSERT OR IGNORE INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
                 VALUES (?, ?, ?, ?)
             ''', welcome_message_data)
 
