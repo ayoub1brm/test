@@ -20,7 +20,6 @@ class DiscordBot(commands.Bot):
     async def update_initial_data(self):
         for guild in self.guilds:
             latest_member_joined_at = self.db.get_latest_member_joined_at()
-            latest_message_timestamp = self.db.get_latest_message_timestamp()
     
             for role in guild.roles:
                 role_data = (role.id, role.name)
@@ -38,18 +37,27 @@ class DiscordBot(commands.Bot):
                             self.get_role_id(role)
                         )
                         self.db.insert_member(member_data)
-    
+            
             # Fetch and insert new messages by channel
+            bienvenue_channel_pattern = re.compile(r"bienvenue", re.IGNORECASE)
             for channel in guild.text_channels:
                 latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
                 after = discord.Object(id=latest_message_id) if latest_message_id else None
-                async for message in channel.history(limit=None, after=after):
-                    created_at = message.created_at.astimezone(self.tz)
-                    message_data = (
-                        message.id, message.channel.id, f'{channel.type}', message.author.id,
-                        message.content, created_at
-                    )
-                    self.db.insert_message(message_data)
+                if bool(bienvenue_channel_pattern.search(channel.name)):
+                    async for message in channel.history(limit=None, after=after):
+                        created_at = message.created_at.astimezone(self.tz)
+                        welcome_message_data = (
+                            message.id, message.mentions[0].id if message.mentions else None, message.content, created_at
+                        )
+                        self.db.insert_welcome_message(welcome_message_data)
+                else:
+                    async for message in channel.history(limit=None, after=after):
+                        created_at = message.created_at.astimezone(self.tz)
+                        message_data = (
+                            message.id, message.channel.id, f'{channel.type}', message.author.id,
+                            message.content, created_at
+                        )
+                        self.db.insert_message(message_data)
     
             for channel in guild.voice_channels:
                 latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
@@ -61,18 +69,6 @@ class DiscordBot(commands.Bot):
                         message.content, created_at
                     )
                     self.db.insert_message(message_data)
-    
-            bienvenue_channel_pattern = re.compile(r"bienvenue", re.IGNORECASE)
-            for channel in guild.text_channels:
-                if bienvenue_channel_pattern.search(channel.name):
-                    latest_message_id = self.db.get_latest_message_id_for_channel(channel.id)
-                    after = discord.Object(id=latest_message_id) if latest_message_id else None
-                    async for message in channel.history(limit=None, after=after):
-                        created_at = message.created_at.astimezone(self.tz)
-                        welcome_message_data = (
-                            message.id, message.mentions[0].id if message.mentions else None, message.content, created_at
-                        )
-                        self.db.insert_welcome_message(welcome_message_data)
     
     async def on_member_join(self, member):
         guild_invites = await member.guild.invites()
