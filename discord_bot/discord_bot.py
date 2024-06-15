@@ -11,11 +11,6 @@ class DiscordBot(commands.Bot):
         super().__init__(command_prefix=command_prefix, intents=intents)
         self.db = db
         self.tz = pytz.timezone('Europe/Paris')
-        self.cache = {
-            'roles': {},
-            'channels': {},
-            'messages': {}
-        }
 
     async def on_ready(self):
         print(f'Logged in as {self.user}')
