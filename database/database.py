@@ -158,7 +158,7 @@ class Database:
     
     def insert_welcome_message(self, message_data):
         self.execute('''
-            INSERT INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
+            INSERT OR IGNORE INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
             VALUES (?, ?, ?, ?)
         ''', message_data)
     
@@ -382,39 +382,3 @@ class Database:
                 HAVING maximum BETWEEN datetime(join_date,'+7 days') AND datetime(join_date,'+14 days') OR minimum BETWEEN datetime(join_date,'+7 days') AND datetime(join_date,'+14 days'))'''
         cursor = self.execute(query,params)
         return cursor.fetchone()[0]
-
-    def batch_insert_role(self, role_data_list):
-        for role_data in role_data_list:
-            self.execute('INSERT OR IGNORE INTO Roles (role_id, role_name) VALUES (?, ?)', role_data)
-
-    def batch_insert_channel(self, channel_data_list):
-        for channel_data in channel_data_list:
-            self.execute('INSERT OR IGNORE INTO Channels (channel_id, channel_name) VALUES (?, ?)', channel_data)
-
-    def batch_insert_member(self, member_data_list):
-        for member_data in member_data_list:
-            self.execute('''
-                INSERT INTO Members (member_id, username, discriminator, join_date, leave_date, is_bot, activity_status, role_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', member_data)
-
-    def batch_insert_message(self, message_data_list):
-        for message_data in message_data_list:
-            self.execute('''
-                INSERT OR IGNORE INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', message_data)
-
-    def batch_insert_welcome_message(self, welcome_message_data_list):
-        for welcome_message_data in welcome_message_data_list:
-            self.execute('''
-                INSERT OR IGNORE INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
-                VALUES (?, ?, ?, ?)
-            ''', welcome_message_data)
-
-    def batch_insert_invite(self, invite_data_list):
-        for invite_data in invite_data_list:
-            self.execute('''
-                INSERT OR REPLACE INTO Invites (code, uses, inviter_id, created_at)
-                VALUES (?, ?, ?, ?)
-            ''', invite_data)
