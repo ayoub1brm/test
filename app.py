@@ -23,6 +23,38 @@ from database.database import Database
 
 # Initialize database
 db = Database('discord_bot.db')
+# Get the token from an environment variable
+discord_token = os.getenv('DISCORD_TOKEN')
+
+FILE_PATH = 'setup_status.txt'
+
+# Function to read the setup status from file
+def read_setup_status():
+    try:
+        with open(FILE_PATH, 'r') as file:
+            return file.read().strip() == 'True'
+    except FileNotFoundError:
+        return False
+
+# Function to write the setup status to file
+def write_setup_status(status):
+    with open(FILE_PATH, 'w') as file:
+        file.write(str(status))
+
+def run_discord_bot():
+    setup_discord_bot(discord_token)
+
+# Main Streamlit application code
+
+# Check if setup has been done
+discord_bot_setup_done = read_setup_status()
+
+# If setup hasn't been done, perform setup and update status
+if not discord_bot_setup_done:
+    bot_thread = threading.Thread(target=run_discord_bot)
+    bot_thread.start()
+    write_setup_status(True)
+
 roles = db.get_roles()
 
 # Set up page configuration
