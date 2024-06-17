@@ -79,7 +79,6 @@ class Database:
                 channel_id INTEGER,
                 channel_type TEXT,
                 member_id INTEGER,
-                message_content TEXT,
                 timestamp DATETIME,
                 FOREIGN KEY (channel_id) REFERENCES Channels(channel_id),
                 FOREIGN KEY (member_id) REFERENCES Members(member_id)
@@ -89,7 +88,6 @@ class Database:
             CREATE TABLE IF NOT EXISTS WelcomeMessages (
                 message_id INTEGER PRIMARY KEY,
                 member_id INTEGER,
-                message_content TEXT,
                 timestamp DATETIME
             )
         ''')
@@ -99,38 +97,7 @@ class Database:
                 channel_name TEXT
             )
         ''')
-        self.execute('''
-            CREATE TABLE IF NOT EXISTS Invites (
-                code TEXT PRIMARY KEY,
-                uses INTEGER,
-                inviter_id INTEGER,
-                created_at TIMESTAMP
-            )
-        ''')
-    
-    def insert_invite(self, code, uses, inviter_id, created_at):
-        self.execute('''
-            INSERT OR REPLACE INTO Invites (code, uses, inviter_id, created_at)
-            VALUES (?, ?, ?, ?)
-        ''', (code, uses, inviter_id, created_at))
 
-    def update_invite_uses(self, code, uses):
-        self.execute('''
-            UPDATE Invites
-            SET uses = ?
-            WHERE code = ?
-        ''', (uses, code))
-
-    def delete_invite(self, code):
-        self.execute('DELETE FROM Invites WHERE code = ?', (code,))
-
-    def get_invite_uses(self, code):
-        cursor = self.execute('SELECT uses FROM Invites WHERE code = ?', (code,))
-        return cursor.fetchone()
-
-    def get_all_invites(self):
-        cursor =  self.execute('SELECT code, uses FROM Invites')
-        return cursor.fetchall()
 
     def insert_member(self, member_data):
         self.execute('''
@@ -152,14 +119,14 @@ class Database:
 
     def insert_message(self, message_data):
         self.execute('''
-            INSERT OR IGNORE INTO Messages (message_id, channel_id, channel_type, member_id, message_content, timestamp)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO Messages (message_id, channel_id, channel_type, member_id, timestamp)
+            VALUES (?, ?, ?, ?, ?)
         ''', message_data)
     
     def insert_welcome_message(self, message_data):
         self.execute('''
-            INSERT OR IGNORE INTO WelcomeMessages (message_id, member_id, message_content, timestamp)
-            VALUES (?, ?, ?, ?)
+            INSERT OR IGNORE INTO WelcomeMessages (message_id, member_id, timestamp)
+            VALUES (?, ?, ?)
         ''', message_data)
     
     def insert_channel(self, channel_id, channel_name):
@@ -181,6 +148,14 @@ class Database:
         self.execute('''
             UPDATE VoiceActivity SET end_time = ? WHERE member_id = ? AND end_time IS NULL
         ''', (end_time, member_id))
+    
+    def update_member_activity_status(self,member_id,activity_status):
+        # Update activity status for the member
+        self.execute('''
+                UPDATE Members
+                SET activity_status = ?
+                WHERE member_id = ?
+            ''', (activity_status, member_id))
 
     def has_data(self):
         cursor = self.execute("SELECT * FROM Members LIMIT 1")
@@ -344,6 +319,11 @@ class Database:
             params.append(top_n)
         cursor = self.execute(query,params)
         return cursor.fetchall()
+    
+    def get_active_members(self):
+        cursor = self.execute('SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" ')
+        result = cursor.fetchone()[0]
+        return result
 
     def get_latest_member_joined_at(self):
         cursor = self.execute('SELECT MAX(join_date) FROM Members')
@@ -351,10 +331,6 @@ class Database:
         if result:
             return datetime.fromisoformat(result)
         return None
-
-    def get_latest_audit_log_created_at(self):
-        cursor = self.execute('SELECT MAX(timestamp) FROM AuditLogs')
-        return cursor.fetchone()[0]
 
     def get_latest_message_timestamp(self):
         cursor = self.execute('SELECT MAX(timestamp) FROM Messages')
