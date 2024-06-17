@@ -321,7 +321,7 @@ class Database:
         return cursor.fetchall()
     
     def get_active_members(self):
-        cursor = self.execute('SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" ')
+        cursor = self.execute('SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" AND leave_date is NULL ')
         result = cursor.fetchone()[0]
         return result
 
