@@ -153,6 +153,6 @@ def setup_discord_bot(token):
     db = Database('discord_bot.db')
     db.create_tables()
     intents = discord.Intents.all()
-    bot = DiscordBot(command_prefix='', intents=intents, db=db)
+    bot = DiscordBot(command_prefix='!', intents=intents, db=db)
     bot.run(token)
 
