@@ -33,7 +33,7 @@ class DiscordBot(commands.Bot):
                     for role in member.roles:
                         member_data = (
                             member.id, member.name, member.discriminator,
-                            joined_at, None, int(member.bot), "active",
+                            joined_at, None, int(member.bot), member.status,
                             self.get_role_id(role)
                         )
                         self.db.insert_member(member_data)
@@ -47,7 +47,7 @@ class DiscordBot(commands.Bot):
                     async for message in channel.history(limit=None, after=after):
                         created_at = message.created_at.astimezone(self.tz)
                         welcome_message_data = (
-                            message.id, message.mentions[0].id if message.mentions else None, message.content, created_at
+                            message.id, message.mentions[0].id if message.mentions else None, created_at
                         )
                         self.db.insert_welcome_message(welcome_message_data)
                 else:
@@ -55,7 +55,7 @@ class DiscordBot(commands.Bot):
                         created_at = message.created_at.astimezone(self.tz)
                         message_data = (
                             message.id, message.channel.id, f'{channel.type}', message.author.id,
-                            message.content, created_at
+                            created_at
                         )
                         self.db.insert_message(message_data)
     
@@ -66,7 +66,7 @@ class DiscordBot(commands.Bot):
                     created_at = message.created_at.astimezone(self.tz)
                     message_data = (
                         message.id, message.channel.id, f'{channel.type}', message.author.id,
-                        message.content, created_at
+                        created_at
                     )
                     self.db.insert_message(message_data)
     
@@ -92,17 +92,11 @@ class DiscordBot(commands.Bot):
         joined_at = datetime.now(self.tz)
         member_data = (
             member.id, member.name, member.discriminator, joined_at,
-            None, int(member.bot), "active", self.get_role_id(member.roles[0]) if member.roles else None
+            None, int(member.bot), member.status, self.get_role_id(member.roles[0]) if member.roles else None
         )
         self.db.insert_member(member_data)
     
-    async def on_invite_create(self, invite):
-        created_at = invite.created_at.astimezone(self.tz)
-        self.db.insert_invite(invite.code, invite.uses, invite.inviter.id, created_at)
-    
-    async def on_invite_delete(self, invite):
-        self.db.delete_invite(invite.code)
-    
+   
     async def on_member_remove(self, member):
         leave_date = datetime.now(self.tz)
         self.db.update_member_leave_date(member.id, leave_date)
@@ -123,26 +117,27 @@ class DiscordBot(commands.Bot):
         if message.author == self.user:
             return
         created_at = message.created_at.astimezone(self.tz)
-        message_data = (
-            message.id, message.channel.id, f'{message.channel.type}', message.author.id,
-            message.content, created_at
-        )
-        self.db.insert_message(message_data)
-    
-        # Insert welcome message if it's from the "bienvenue" channel
         bienvenue_channel_pattern = re.compile(r"bienvenue", re.IGNORECASE)
-        if bienvenue_channel_pattern.search(message.channel.name):
+        if bool(bienvenue_channel_pattern.search(message.channel.name)):
             welcome_message_data = (
-                message.id, message.author.id, message.content, created_at
+                message.id, message.author.id, created_at
             )
             self.db.insert_welcome_message(welcome_message_data)
-    
-    async def on_reaction_add(self, reaction, user):
-        created_at = datetime.now(self.tz)
-        reaction_data = (
-            reaction.message.id, user.id, str(reaction.emoji), created_at
-        )
-        self.db.insert_reaction(*reaction_data)
+        else:
+            message_data = (
+                message.id, message.channel.id, f'{message.channel.type}', message.author.id,
+                created_at
+            )
+            self.db.insert_message(message_data)
+
+        # Insert welcome message if it's from the "bienvenue" channel
+
+
+    async def on_presence_update(self,before,after):
+        if before.status != after.status:
+            activity_status = str(after.status)
+            self.db.update_member_activity_status(after.id, activity_status)
+
     
     def get_role_id(self, role):
         cursor = self.db.execute('SELECT role_id FROM Roles WHERE role_name = ?', (role.name,))
@@ -160,3 +155,4 @@ def setup_discord_bot(token):
     intents = discord.Intents.all()
     bot = DiscordBot(command_prefix='', intents=intents, db=db)
     bot.run(token)
+
