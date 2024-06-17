@@ -33,7 +33,7 @@ class DiscordBot(commands.Bot):
                     for role in member.roles:
                         member_data = (
                             member.id, member.name, member.discriminator,
-                            joined_at, None, int(member.bot), member.status,
+                            joined_at, None, int(member.bot), str(member.status),
                             self.get_role_id(role)
                         )
                         self.db.insert_member(member_data)
@@ -70,31 +70,14 @@ class DiscordBot(commands.Bot):
                     )
                     self.db.insert_message(message_data)
     
-    async def on_member_join(self, member):
-        guild_invites = await member.guild.invites()
-        current_invites = {invite.code: invite.uses for invite in guild_invites}
-    
-        db_invites = dict(self.db.get_all_invites())
-        used_invite = None
-    
-        for code, uses in current_invites.items():
-            if code in db_invites and uses > db_invites[code]:
-                used_invite = code
-                break
-    
-        if used_invite:
-            invite = next((inv for inv in guild_invites if inv.code == used_invite), None)
-            if invite:
-                created_at = invite.created_at.astimezone(self.tz)
-                self.db.insert_invite(invite.code, invite.uses, invite.inviter.id, created_at)
-                self.db.update_invite_uses(invite.code, invite.uses)
-    
+    async def on_member_join(self, member):    
         joined_at = datetime.now(self.tz)
-        member_data = (
-            member.id, member.name, member.discriminator, joined_at,
-            None, int(member.bot), member.status, self.get_role_id(member.roles[0]) if member.roles else None
-        )
-        self.db.insert_member(member_data)
+        for role in member.roles:
+            member_data = (
+                member.id, member.name, member.discriminator, joined_at,
+                None, int(member.bot), str(member.status), self.get_role_id(role)
+            )
+            self.db.insert_member(member_data)
     
    
     async def on_member_remove(self, member):
