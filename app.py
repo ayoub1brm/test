@@ -159,7 +159,7 @@ with stylable_container(
             total_members_chart(db)
 
         with col2:
-            st.info("Active Members",icon="📊")
+            st.info("Online Members",icon="📊")
             active_members_chart(db, start_date, end_date)
         joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
         with col3:
