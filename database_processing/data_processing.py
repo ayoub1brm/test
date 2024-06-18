@@ -54,7 +54,7 @@ def get_joined_since_date(db,start=None,end=None):
 def get_join_and_leave_stats(db,start_date=None, end_date=None):
     joined_members = db.get_joined_since(start_date, end_date)
     current_members = db.get_current_members(start_date, end_date)
-    db_left_members = db.get_members_left()
+    db_left_members = db.get_members_left(start_date, end_date)
     left_count = joined_members-current_members
 
     if db_left_members > left_count:
