@@ -70,7 +70,7 @@ def get_joined_across_time(db,start_date, end_date, granularity):
 
     # Resample based on the specified granularity
     if granularity == 'minute':
-        joined_counts = data.resample('T').count()
+        joined_counts = data.resample('min').count()
     elif granularity == 'half_hour':
         joined_counts = data.resample('30T').count()
     elif granularity == 'hour':
