@@ -70,7 +70,7 @@ def get_joined_across_time(db,start_date, end_date, granularity):
 
     # Resample based on the specified granularity
     if granularity == 'minute':
-        joined_counts = data.resample('min').count()
+        joined_counts = data.resample('s').count()
     elif granularity == 'half_hour':
         joined_counts = data.resample('30min').count()
     elif granularity == 'hour':
@@ -95,7 +95,7 @@ def get_messages_activity_line(db,start_date,end_date,granularity):
 
     if granularity == 'minute':
         df.set_index('timestamp', inplace=True)
-        df = df.groupby(['channel_name', pd.Grouper(freq='min')]).sum().reset_index()
+        df = df.groupby(['channel_name', pd.Grouper(freq='s')]).sum().reset_index()
     elif granularity == 'half_hour':
         df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='30min')]).sum().reset_index()
