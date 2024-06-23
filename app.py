@@ -74,7 +74,7 @@ time_range = st.sidebar.selectbox("Select Time Range", ["Last 15 minutes", "Last
 end_date = datetime.now()
 if time_range == "Last 15 minutes":
     start_date = end_date - timedelta(minutes=15)
-    granularity = 'minute'
+    granularity = 'second'
 elif time_range == "Last hour":
     start_date = end_date - timedelta(hours=1)
     granularity = 'minute'
