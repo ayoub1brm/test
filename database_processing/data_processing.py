@@ -95,10 +95,10 @@ def get_messages_activity_line(db,start_date,end_date,granularity):
 
     if granularity == 'minute':
         df.set_index('timestamp', inplace=True)
-        df = df.groupby(['channel_name', pd.Grouper(freq='T')]).sum().reset_index()
+        df = df.groupby(['channel_name', pd.Grouper(freq='min')]).sum().reset_index()
     elif granularity == 'half_hour':
         df.set_index('timestamp', inplace=True)
-        df = df.groupby(['channel_name', pd.Grouper(freq='30T')]).sum().reset_index()
+        df = df.groupby(['channel_name', pd.Grouper(freq='30min')]).sum().reset_index()
     elif granularity == 'hour':
         df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='H')]).sum().reset_index()
