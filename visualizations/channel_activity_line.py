@@ -16,7 +16,6 @@ def channel_activity_line_chart(db,start_date, end_date, granularity):
         fig.add_trace(go.Scatter(
             x=df_pivot.index,
             y=df_pivot[channel_name],
-            mode='lines',
             fill='tozeroy',  # Fill the area under the curve
             name=f'{channel_name}'
         ))
