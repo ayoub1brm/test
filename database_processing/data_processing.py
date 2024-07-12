@@ -90,43 +90,36 @@ def get_joined_across_time(db,start_date, end_date, granularity):
     return joined_counts
 
 
-def get_messages_activity_line(db, start_date, end_date, granularity):
-    data = db.get_message_activity_by_channel(start_date, end_date)
+def get_messages_activity_line(db,start_date,end_date,granularity):
+    data = db.get_message_activity_by_channel(start_date,end_date)
     df = pd.DataFrame(data, columns=['channel_name', 'message_count', 'timestamp'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], format='ISO8601', errors='coerce')
 
-    # Group by the specified granularity
     if granularity == 'second':
-        freq = 's'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='s')]).sum().reset_index()
     elif granularity == 'minute':
-        freq = 'min'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='min')]).sum().reset_index()
     elif granularity == 'half_hour':
-        freq = '30min'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='30min')]).sum().reset_index()
     elif granularity == 'hour':
-        freq = 'H'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='H')]).sum().reset_index()
     elif granularity == 'day':
-        freq = 'D'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='D')]).sum().reset_index()
     elif granularity == 'week':
-        freq = 'W'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='W')]).sum().reset_index()
     elif granularity == 'month':
-        freq = 'M'
+        df.set_index('timestamp', inplace=True)
+        df = df.groupby(['channel_name', pd.Grouper(freq='M')]).sum().reset_index()
     else:
         raise ValueError("Invalid granularity")
+    return df
 
-    # Generate complete date range
-    date_range = pd.date_range(start=start_date, end=end_date, freq=freq)
-
-    # Create a MultiIndex DataFrame with all combinations of channel_name and date_range
-    idx = pd.MultiIndex.from_product([df['channel_name'].unique(), date_range], names=['channel_name', 'timestamp'])
-    df_complete = pd.DataFrame(index=idx).reset_index()
-
-    # Merge with original data to fill missing values with zeros
-    df_merged = pd.merge(df_complete, df, on=['channel_name', 'timestamp'], how='left').fillna(0)
-
-    # Group by channel_name and timestamp again to sum message_count
-    df_final = df_merged.groupby(['channel_name', 'timestamp']).sum().reset_index()
-
-    return df_final
 
 
 def get_message_activity_bar(db,start_date,end_date,top_n):
