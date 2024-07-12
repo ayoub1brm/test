@@ -65,7 +65,7 @@ def get_join_and_leave_stats(db,start_date=None, end_date=None):
 def get_joined_across_time(db,start_date, end_date, granularity):
     welcome_messages = db.get_welcome_messages_between_dates(start_date, end_date)
     data = pd.DataFrame(welcome_messages, columns=['member_id', 'timestamp'])
-    data['timestamp'] = pd.to_datetime(data['timestamp'], utc=True, errors='coerce')
+    data['timestamp'] = pd.to_datetime(data['timestamp'])
     data.set_index('timestamp', inplace=True)
 
     # Resample based on the specified granularity
