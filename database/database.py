@@ -289,7 +289,7 @@ class Database:
     
     def get_message_activity_by_channel(self,start_date=None, end_date=None):
         query = '''
-            SELECT Channels.channel_name, COUNT(*) AS message_count, DATE(timestamp) AS date
+            SELECT Channels.channel_name, COUNT(*) AS message_count, timestamp AS date
             FROM Messages JOIN Channels ON Channels.channel_id = Messages.channel_id
             '''
         params = []
