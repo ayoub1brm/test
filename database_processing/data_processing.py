@@ -98,7 +98,8 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     df = pd.DataFrame(data, columns=['channel_name', 'message_count', 'timestamp'])
     
     # Convert timestamp to datetime
-    df['timestamp'] = pd.to_datetime(df['timestamp'], format='ISO8601', errors='coerce')
+    df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True, errors='coerce')
+    df.set_index('timestamp', inplace=True)
     
     # Group by channel_name and timestamp
     if granularity == 'second':
@@ -119,7 +120,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
         raise ValueError("Invalid granularity")
     
     # Group by channel_name and resample within each group
-    df_resampled = df.set_index('timestamp').groupby('channel_name').resample(freq).count().reset_index()
+    df_resampled = df.groupby('channel_name').resample(freq).sum().reset_index()
     
     return df_resampled
 
