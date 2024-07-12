@@ -120,7 +120,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
         raise ValueError("Invalid granularity")
     
     # Group by channel_name and resample within each group
-    df_resampled = df.groupby('channel_name').resample(freq).sum().reset_index()
+    df_resampled = df.groupby('channel_name').resample(freq).sum()
     
     return df_resampled
 
