@@ -93,7 +93,6 @@ def get_joined_across_time(db,start_date, end_date, granularity):
 def get_messages_activity_line(db, start_date, end_date, granularity):
     # Get data from database
     data = db.get_message_activity_by_channel(start_date, end_date)
-    print(hello)
     # Create DataFrame
     df = pd.DataFrame(data, columns=['channel_name', 'message_count', 'timestamp'])
     
