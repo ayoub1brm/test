@@ -97,11 +97,11 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
 
     # Group by the specified granularity
     if granularity == 'second':
-        freq = 'S'
+        freq = 's'
     elif granularity == 'minute':
-        freq = 'T'
+        freq = 'min'
     elif granularity == 'half_hour':
-        freq = '30T'
+        freq = '30min'
     elif granularity == 'hour':
         freq = 'H'
     elif granularity == 'day':
