@@ -65,7 +65,7 @@ def get_join_and_leave_stats(db,start_date=None, end_date=None):
 def get_joined_across_time(db,start_date, end_date, granularity):
     welcome_messages = db.get_welcome_messages_between_dates(start_date, end_date)
     data = pd.DataFrame(welcome_messages, columns=['member_id', 'timestamp'])
-    data['timestamp'] = pd.to_datetime(data['timestamp'])
+    data['timestamp'] = pd.to_datetime(data['timestamp'],format='mixed')
     data.set_index('timestamp', inplace=True)
 
     # Resample based on the specified granularity
@@ -97,7 +97,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     df = pd.DataFrame(data, columns=['channel_name', 'message_count', 'timestamp'])
     
     # Convert timestamp to datetime
-    df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True, errors='coerce')    
+    df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed')    
 
 
    # Apply resampling and aggregation based on granularity
