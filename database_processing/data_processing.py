@@ -80,7 +80,7 @@ def get_joined_across_time(db,start_date, end_date, granularity):
     elif granularity == 'day':
         joined_counts = data.resample('D').count()
     elif granularity == 'week':
-        joined_counts = data.resample('W-MON').count()
+        joined_counts = data.resample('W').count()
     elif granularity == 'month':
         joined_counts = data.resample('M').count()
     else:
@@ -97,30 +97,24 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     df = pd.DataFrame(data, columns=['channel_name', 'message_count', 'timestamp'])
     
     # Convert timestamp to datetime
-    df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed')    
+    df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed')
+    df.set_index('timestamp', inplace=True)
 
 
    # Apply resampling and aggregation based on granularity
     if granularity == 'second':
-        df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='s')]).sum().reset_index()
     elif granularity == 'minute':
-        df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='min')]).sum().reset_index()
     elif granularity == 'half_hour':
-        df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='30min')]).sum().reset_index()
     elif granularity == 'hour':
-        df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='H')]).sum().reset_index()
     elif granularity == 'day':
-        df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='D')]).sum().reset_index()
     elif granularity == 'week':
-        df.set_index('timestamp', inplace=True)
-        df = df.groupby(['channel_name', pd.Grouper(freq='W')]).sum().reset_index()
+        df = df.groupby(['channel_name', pd.Grouper(freq='W-MON')]).sum().reset_index()
     elif granularity == 'month':
-        df.set_index('timestamp', inplace=True)
         df = df.groupby(['channel_name', pd.Grouper(freq='M')]).sum().reset_index()
     else:
         raise ValueError("Invalid granularity")
