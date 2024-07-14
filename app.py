@@ -20,6 +20,7 @@ import os
 import subprocess
 from discord_bot.discord_bot import setup_discord_bot
 from database.database import Database
+import pytz
 
 # Initialize database
 db = Database('discord_bot.db')
@@ -71,7 +72,7 @@ st.set_page_config(
 # Sidebar for logo and time range selection
 st.sidebar.image("logo_mc.png", use_column_width=False)
 time_range = st.sidebar.selectbox("Select Time Range", ["Last 15 minutes", "Last hour", "Last 3 hours", "Last 24 hours", "Last 7 days", "Last month", "Last 6 months", "Last year","Last 2 year", "Custom", "Since creation"])
-end_date = datetime.now()
+end_date = datetime.now(pytz.timezone('Europe/Paris'))
 if time_range == "Last 15 minutes":
     start_date = end_date - timedelta(minutes=15)
     granularity = 'second'
