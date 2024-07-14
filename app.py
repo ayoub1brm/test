@@ -194,8 +194,7 @@ with stylable_container(
 
         with col1:
             st.info("Total Members",icon="📊")
-            members_with_role(db,"・ Membre Elite")
-
+            members_with_role_chart(db, "・ Membre Elite")
         with col2:
             st.info("Online Members",icon="📊")
             active_members_chart(db, start_date, end_date)
