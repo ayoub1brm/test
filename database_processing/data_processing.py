@@ -113,7 +113,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     elif granularity == 'day':
         df = df.groupby(['channel_name', pd.Grouper(freq='D')]).sum().reset_index()
     elif granularity == 'week':
-        df = df.groupby(['channel_name', pd.Grouper(freq='W-MON')]).sum().reset_index()
+        df = df.groupby(['channel_name', pd.Grouper(freq='W-MON')]).sum()
     elif granularity == 'month':
         df = df.groupby(['channel_name', pd.Grouper(freq='M')]).sum().reset_index()
     else:
