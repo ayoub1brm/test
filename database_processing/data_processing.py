@@ -80,7 +80,7 @@ def get_joined_across_time(db,start_date, end_date, granularity):
     elif granularity == 'day':
         joined_counts = data.resample('D').count()
     elif granularity == 'week':
-        joined_counts = data.resample('W').count()
+        joined_counts = data.resample('W-MON').count()
     elif granularity == 'month':
         joined_counts = data.resample('M').count()
     else:
