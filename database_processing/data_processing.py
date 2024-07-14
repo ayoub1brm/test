@@ -28,7 +28,7 @@ def member_join_events_across_time(db,start_date=None, end_date=None):
         join_events_by_date[date] = join_events_by_date.get(date, 0) + 1
     return join_events_by_date
 
-def active_members(db, role, start_date=None, end_date=None):
+def active_members(db, role):
     # Define criteria for active members and fetch count from the database
     return db.get_active_members(role)
 
