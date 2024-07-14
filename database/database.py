@@ -320,8 +320,11 @@ class Database:
         cursor = self.execute(query,params)
         return cursor.fetchall()
     
-    def get_active_members(self):
-        cursor = self.execute('SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" AND leave_date is NULL ')
+    def get_active_members(self,role_id=None):
+        if not role:
+            cursor = self.execute('SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" AND leave_date is NULL ')
+        else:
+            cursor = self.execute(f"SELECT COUNT(*) FROM (SELECT * FROM Members WHERE role_id = {role_id} GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" AND leave_date is NULL")            
         result = cursor.fetchone()[0]
         return result
 
