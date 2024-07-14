@@ -11,6 +11,7 @@ from visualizations.role_distribution import role_distribution_chart
 from visualizations.joined_left import joined_and_left_chart
 from visualizations.channel_activity_bar import top_channels_bar_chart
 from visualizations.channel_activity_line import channel_activity_line_chart
+from data_processing import members_with_role
 from database.database import Database
 from streamlit_extras.stylable_container import stylable_container
 import altair as alt
@@ -193,7 +194,7 @@ with stylable_container(
 
         with col1:
             st.info("Total Members",icon="📊")
-            total_members_chart(db)
+            members_with_role(db,"・ Membre Elite")
 
         with col2:
             st.info("Online Members",icon="📊")
