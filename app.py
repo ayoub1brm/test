@@ -174,6 +174,52 @@ with stylable_container(
         with col6:
             st.info("Server Retention",icon="📊")
             retention_join_leave_chart(db, start_date, end_date)
+    with stylable_container(
+            key="container_dashboard",
+            css_styles="""
+                {
+                    border: 5px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 1.5rem;
+                    padding: calc(1em - 1px)
+                }
+                """,
+        ):
+    alt.themes.enable("dark")
+
+    # Metrics section
+    st.header("Server Overview")
+    with stylable_container(
+            key="container_dashboard",
+            css_styles="""
+                {
+                    border: 5px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 1.5rem;
+                    padding: calc(1em - 1px)
+                }
+                """,
+        ):
+        col1, col2,col3,col4,col5,col6 = st.columns(6,gap="medium")
+
+        with col1:
+            st.info("Total Members",icon="📊")
+            total_members_chart(db)
+
+        with col2:
+            st.info("Online Members",icon="📊")
+            active_members_chart(db, start_date, end_date)
+        joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
+        with col3:
+            st.info("Server Traffic",icon="📊")
+            st.metric(label="Joined",value=joined,delta=delta_join)
+        with col4:
+            st.info("Server Traffic",icon="📊")
+            st.metric(label="Left",value=(left*(-1)),delta=(delta_left*(-1)))
+        with col5:
+            st.info("Server Retention",icon="📊")
+            retention_7_14_chart(db, start_date, end_date)
+        with col6:
+            st.info("Server Retention",icon="📊")
+            retention_join_leave_chart(db, start_date, end_date)
 
     
     col4, col5 = st.columns([3, 8])
