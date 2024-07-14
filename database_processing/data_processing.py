@@ -97,7 +97,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     df = pd.DataFrame(data, columns=['channel_name', 'message_count', 'timestamp'])
     
     # Convert timestamp to datetime
-    df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed')
+    df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed',errors='coerce')
     df.set_index('timestamp', inplace=True)
 
 
