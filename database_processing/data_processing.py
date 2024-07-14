@@ -98,7 +98,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     
     # Convert timestamp to datetime
     df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed',errors='coerce')
-    df = df.set_index('timestamp', inplace=True)
+    df = df.set_index('timestamp')
 
 
    # Apply resampling and aggregation based on granularity
