@@ -174,17 +174,7 @@ with stylable_container(
         with col6:
             st.info("Server Retention",icon="📊")
             retention_join_leave_chart(db, start_date, end_date)
-    with stylable_container(
-            key="container_dashboard",
-            css_styles="""
-                {
-                    border: 5px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 1.5rem;
-                    padding: calc(1em - 1px)
-                }
-                """,
-        ):
-    alt.themes.enable("dark")
+    
 
     # Metrics section
     st.header("Server Overview")
