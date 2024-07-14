@@ -2,6 +2,7 @@ from database.database import Database
 from datetime import datetime, timedelta
 from database_processing.retention_indicator import retention_within_seven_to_fourteen_days
 import pandas as pd
+import pytz
 
 def total_members(db):
     return db.get_total_member_count()
@@ -65,7 +66,7 @@ def get_join_and_leave_stats(db,start_date=None, end_date=None):
 def get_joined_across_time(db,start_date, end_date, granularity):
     welcome_messages = db.get_welcome_messages_between_dates(start_date, end_date)
     data = pd.DataFrame(welcome_messages, columns=['member_id', 'timestamp'])
-    data['timestamp'] = pd.to_datetime(data['timestamp'],format='mixed')
+    data['timestamp'] = pd.to_datetime(data['timestamp'],format='mixed').map(lambda x: x.tz_convert('Europe/Paris'))
     data.set_index('timestamp', inplace=True)
 
     # Resample based on the specified granularity
