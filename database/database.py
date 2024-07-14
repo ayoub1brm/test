@@ -321,7 +321,7 @@ class Database:
         return cursor.fetchall()
     
     def get_active_members(self,role_id=None):
-        if role_id:
+        if not role_id:
             cursor = self.execute(f"SELECT COUNT(*) FROM (SELECT * FROM Members WHERE role_id = {role_id} GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" AND leave_date is NULL")
         else:
             cursor = self.execute('SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id HAVING is_bot=0) WHERE activity_status != \"offline\" AND leave_date is NULL ')            
