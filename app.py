@@ -162,7 +162,7 @@ with stylable_container(
 
         with col2:
             st.info("Online Members",icon="📊")
-            active_members_chart(db, start_date, end_date,False)
+            active_members_chart(db)
         joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
         with col3:
             st.info("Server Traffic",icon="📊")
@@ -197,7 +197,7 @@ with stylable_container(
             members_with_role_chart(db, "・ Membre Elite")
         with col2:
             st.info("Online Members",icon="📊")
-            active_members_chart(db, start_date, end_date,role=1233876743928942783)
+            active_members_chart(db,role=1233876743928942783)
         joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
         with col3:
             st.info("Server Traffic",icon="📊")
