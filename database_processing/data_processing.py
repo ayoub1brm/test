@@ -98,7 +98,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     
     # Convert timestamp to datetime
     df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed',errors='coerce')
-    df.set_index('timestamp', inplace=True)
+    df = df.set_index('timestamp', inplace=True)
 
 
    # Apply resampling and aggregation based on granularity
@@ -113,7 +113,7 @@ def get_messages_activity_line(db, start_date, end_date, granularity):
     elif granularity == 'day':
         df = df.groupby(['channel_name', pd.Grouper(freq='D')]).sum().reset_index()
     elif granularity == 'week':
-        df = df.groupby(['channel_name', pd.Grouper(freq='W-MON')]).sum()
+        df = df.groupby(['channel_name', pd.Grouper(freq='W')]).sum().reset_index()
     elif granularity == 'month':
         df = df.groupby(['channel_name', pd.Grouper(freq='M')]).sum().reset_index()
     else:
