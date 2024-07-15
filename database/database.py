@@ -241,6 +241,29 @@ class Database:
         cursor = self.execute(query,params)
         return cursor.fetchone()[0]
 
+    def get_sub(self,start=None,end=None):
+        params = []
+        query = '''
+            SELECT COUNT(member_id) FROM Subscribers
+        '''
+        if start and end:
+            params = [start,end]
+            query += '''AND sub_date BETWEEN ? and ?'''
+        cursor = self.execute(query,params)
+        return cursor.fetchone()[0]
+
+    def get_unsub(self,start=None,end=None):
+        params = []
+        query = '''
+            SELECT COUNT(member_id) FROM Subscribers
+            WHERE unsub_date is not NULL
+        '''
+        if start and end:
+            params = [start,end]
+            query += '''AND unsub_date BETWEEN ? and ?'''
+        cursor = self.execute(query,params)
+        return cursor.fetchone()[0]
+
     def get_members_left(self, start_date=None, end_date=None):
         query = '''
             SELECT COUNT(*)
