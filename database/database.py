@@ -101,9 +101,8 @@ class Database:
             CREATE TABLE IF NOT EXISTS Subscribers (
                 member_id INTEGER,
                 sub_date DATETIME,
-                unsub_date DATETIME,
-                FOREIGN KEY (member_id) REFERENCES Members(member_id)
-            )
+                unsub_date DATETIME
+                )
         ''')
 
     def insert_member(self, member_data):
@@ -140,7 +139,7 @@ class Database:
         self.execute('''
             INSERT OR IGNORE INTO Subscribers (member_id, sub_date, unsub_date)
             VALUES (?, ?, ?)
-        ''', (member, sub_date, unsub_date)
+        ''', (member, sub_date, unsub_date))
     
     def insert_channel(self, channel_id, channel_name):
         self.execute('''
