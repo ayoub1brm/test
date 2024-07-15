@@ -134,11 +134,11 @@ class DiscordBot(commands.Bot):
         after_sub = sum([int(role.id == 1233876743928942783) for role in after.roles])
         if before_sub and not after_sub:
             leave_date = datetime.now(self.tz)
-            #self.db.update_sub_leave_date(after.id,leave_date)
+            self.db.update_sub_leave_date(after.id,leave_date)
         
         if not before_sub and after_sub:
             join_date = datetime.now(self.tz)
-            #self.db.insert_sub(after.id,join_date,None)
+            self.db.insert_sub(after.id,join_date,None)
         
     async def on_presence_update(self,before,after):
         if before.status != after.status:
