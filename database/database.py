@@ -248,7 +248,7 @@ class Database:
         '''
         if start and end:
             params = [start,end]
-            query += '''AND sub_date BETWEEN ? and ?'''
+            query += '''WHERE sub_date BETWEEN ? and ?'''
         cursor = self.execute(query,params)
         return cursor.fetchone()[0]
 
