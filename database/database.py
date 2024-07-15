@@ -97,7 +97,14 @@ class Database:
                 channel_name TEXT
             )
         ''')
-
+        self.execute('''
+            CREATE TABLE IF NOT EXISTS Subscribers (
+                member_id INTEGER,
+                sub_date DATETIME,
+                unsub_date DATETIME,
+                FOREIGN KEY (member_id) REFERENCES Members(member_id)
+            )
+        ''')
 
     def insert_member(self, member_data):
         self.execute('''
@@ -128,6 +135,12 @@ class Database:
             INSERT OR IGNORE INTO WelcomeMessages (message_id, member_id, timestamp)
             VALUES (?, ?, ?)
         ''', message_data)
+
+    def insert_sub(self, member,sub_date,unsub_date):
+        self.execute('''
+            INSERT OR IGNORE INTO Subscribers (member_id, sub_date, unsub_date)
+            VALUES (?, ?, ?)
+        ''', (member, sub_date, unsub_date)
     
     def insert_channel(self, channel_id, channel_name):
         self.execute('''
@@ -143,7 +156,12 @@ class Database:
         self.execute('''
             UPDATE Members SET leave_date = ? WHERE member_id = ?
         ''', (leave_date, member_id))
-
+        
+    def update_sub_leave_date(self, member_id, leave_date):
+        self.execute('''
+            UPDATE Subscribers SET unsub_date = ? WHERE member_id = ?
+        ''', (leave_date, member_id))
+        
     def update_voice_activity_end_time(self, member_id, end_time):
         self.execute('''
             UPDATE VoiceActivity SET end_time = ? WHERE member_id = ? AND end_time IS NULL
