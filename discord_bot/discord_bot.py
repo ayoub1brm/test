@@ -31,6 +31,8 @@ class DiscordBot(commands.Bot):
                 joined_at = member.joined_at.astimezone(self.tz) if member.joined_at else None
                 if not latest_member_joined_at or (joined_at and joined_at > latest_member_joined_at.astimezone(self.tz)):
                     for role in member.roles:
+                        if role.id == 1233876743928942783:
+                            self.db.insert_sub(member.id,joined_at,None)
                         member_data = (
                             member.id, member.name, member.discriminator,
                             joined_at, None, int(member.bot), str(member.status),
@@ -50,6 +52,9 @@ class DiscordBot(commands.Bot):
                             message.id, message.mentions[0].id if message.mentions else None, created_at
                         )
                         self.db.insert_welcome_message(welcome_message_data)
+                        
+                elif channel.id == 1233984456021245972:
+                    pass
                 else:
                     async for message in channel.history(limit=None, after=after):
                         created_at = message.created_at.astimezone(self.tz)
@@ -99,6 +104,8 @@ class DiscordBot(commands.Bot):
     async def on_message(self, message):
         if message.author == self.user:
             return
+        if message.channel.id == 1233984456021245972:
+            return
         created_at = message.created_at.astimezone(self.tz)
         bienvenue_channel_pattern = re.compile(r"bienvenue", re.IGNORECASE)
         if bool(bienvenue_channel_pattern.search(message.channel.name)):
@@ -115,7 +122,24 @@ class DiscordBot(commands.Bot):
 
         # Insert welcome message if it's from the "bienvenue" channel
 
+    async def on_guild_channel_create(self,channel):
+        self.db.insert_channel(channel.id, channel.name)
 
+    async def on_guild_role_create(self,role):
+        role_data = (role.id, role.name)
+        self.db.insert_role(role_data)
+
+    async def on_member_update(self,before,after):
+        before_sub = sum([int(role.id == 1233876743928942783) for role in before.roles])
+        after_sub = sum([int(role.id == 1233876743928942783) for role in after.roles])
+        if before_sub and not after_sub:
+            leave_date = datetime.now(self.tz)
+            #self.db.update_sub_leave_date(after.id,leave_date)
+        
+        if not before_sub and after_sub:
+            join_date = datetime.now(self.tz)
+            #self.db.insert_sub(after.id,join_date,None)
+        
     async def on_presence_update(self,before,after):
         if before.status != after.status:
             activity_status = str(after.status)
