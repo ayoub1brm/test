@@ -11,6 +11,7 @@ from visualizations.role_distribution import role_distribution_chart
 from visualizations.joined_left import joined_and_left_chart
 from visualizations.channel_activity_bar import top_channels_bar_chart
 from visualizations.channel_activity_line import channel_activity_line_chart
+from visualizations.sub_unsub_chart import sub_unsub_chart
 from database_processing.data_processing import members_with_role
 from database.database import Database
 from streamlit_extras.stylable_container import stylable_container
@@ -198,13 +199,13 @@ with stylable_container(
         with col2:
             st.info("Online Members",icon="📊")
             active_members_chart(db,role=1233876743928942783)
-        joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
+        sub,delta_sub,unsub,delta_unsub = sub_unsub_chart(db, start_date, end_date)
         with col3:
             st.info("Server Traffic",icon="📊")
-            st.metric(label="Joined",value=joined,delta=delta_join)
+            st.metric(label="Sub",value=sub,delta=delta_sub)
         with col4:
             st.info("Server Traffic",icon="📊")
-            st.metric(label="Left",value=(left*(-1)),delta=(delta_left*(-1)))
+            st.metric(label="Unsub",value=(unsub*(-1)),delta=(delta_unsub*(-1)))
         with col5:
             st.info("Server Retention",icon="📊")
             retention_7_14_chart(db, start_date, end_date)
