@@ -20,6 +20,12 @@ def human_and_bots(db,wd=False, start_date=None, end_date=None):
 def members_joined_and_left(db, start_date=None, end_date=None):
     return db.get_members_joined_and_left(start_date, end_date)
 
+def sub(db, start_date=None, end_date=None):
+    return db.get_sub(start_date, end_date)
+
+def unsub(db, start_date=None, end_date=None):
+    return db.get_unsub(start_date, end_date)
+
 def member_join_events_across_time(db,start_date=None, end_date=None):
     join_events = db.get_member_join_events_across_time(start_date, end_date)
     join_events_by_date = {}
