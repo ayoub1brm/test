@@ -22,9 +22,9 @@ def channel_activity_line_chart(db,start_date, end_date, granularity):
         ))
 
     fig.update_layout(
-        title='Message Activity by Channel Over Time',
-        xaxis_title='Time',
-        yaxis_title='Number of Messages',
+        title='Nombre de message par Channel dans le temps',
+        xaxis_title='Date/heure',
+        yaxis_title='Nombre de messages',
         template='plotly_white'
     )
 
