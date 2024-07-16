@@ -73,36 +73,36 @@ st.set_page_config(
 
 # Sidebar for logo and time range selection
 st.sidebar.image("logo_mc.png", use_column_width=False)
-time_range = st.sidebar.selectbox("Select Time Range", ["Last 15 minutes", "Last hour", "Last 3 hours", "Last 24 hours", "Last 7 days", "Last month", "Last 6 months", "Last year","Last 2 year", "Custom", "Since creation"])
+time_range = st.sidebar.selectbox("Select Time Range", ["il y a 15 minutes", "il y a 1 heure", "il y a 3 heures", "il y a 24 heures", "il y a 7 jours", "il y a 1 mois", "il y a 6 mois", "il y a 1 ans","il y a 2 ans", "Personnaliser"])
 end_date = datetime.now(pytz.timezone('Europe/Paris'))
-if time_range == "Last 15 minutes":
+if time_range == ""il y a 15 minutes"":
     start_date = end_date - timedelta(minutes=15)
     granularity = 'second'
-elif time_range == "Last hour":
+elif time_range == "il y a 1 heure":
     start_date = end_date - timedelta(hours=1)
     granularity = 'minute'
-elif time_range == "Last 3 hours":
+elif time_range == "il y a 3 heures":
     start_date = end_date - timedelta(hours=3)
     granularity = 'minute'
-elif time_range == "Last 24 hours":
+elif time_range == "il y a 24 heures":
     start_date = end_date - timedelta(days=1)
     granularity = 'half_hour'
-elif time_range == "Last 7 days":
+elif time_range == "il y a 7 jours":
     start_date = end_date - timedelta(days=7)
     granularity = 'hour'
-elif time_range == "Last month":
+elif time_range == "il y a 1 mois":
     start_date = end_date - timedelta(days=30)
     granularity = 'day'
-elif time_range == "Last 6 months":
+elif time_range == "il y a 6 mois":
     start_date = end_date - timedelta(days=180)
     granularity = 'week'
-elif time_range == "Last year":
+elif time_range == "il y a 1 ans":
     start_date = end_date - timedelta(days=365)
     granularity = 'month'
-elif time_range == "Last 2 year":
+elif time_range == "il y a 2 ans":
     start_date = end_date - timedelta(days=365*2)
     granularity = 'month'
-elif time_range == "Custom":
+elif time_range == "Personnaliser":
     start_date = st.sidebar.date_input("Start date", value=datetime.now() - timedelta(days=1))
     end_date = st.sidebar.date_input("End date", value=datetime.now())
     if (end_date - start_date).days <= 1:
@@ -144,7 +144,7 @@ with stylable_container(
     alt.themes.enable("dark")
 
     # Metrics section
-    st.header("Server Overview")
+    st.header("Aperçu Analytics")
     with stylable_container(
             key="container_dashboard",
             css_styles="""
@@ -158,29 +158,29 @@ with stylable_container(
         col1, col2,col3,col4,col5,col6 = st.columns(6,gap="medium")
 
         with col1:
-            st.info("Total Members",icon="📊")
+            st.info("Total Membres",icon="📊")
             total_members_chart(db)
 
         with col2:
-            st.info("Online Members",icon="📊")
+            st.info("Membres actifs",icon="📊")
             active_members_chart(db)
         joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
         with col3:
-            st.info("Server Traffic",icon="📊")
+            st.info("Flux sur serveur",icon="📊")
             st.metric(label="Joined",value=joined,delta=delta_join)
         with col4:
-            st.info("Server Traffic",icon="📊")
+            st.info("Flux sur serveur",icon="📊")
             st.metric(label="Left",value=(left*(-1)),delta=(delta_left*(-1)))
         with col5:
-            st.info("Server Retention",icon="📊")
+            st.info("Rétention temporelle",icon="📊")
             retention_7_14_chart(db, start_date, end_date)
         with col6:
-            st.info("Server Retention",icon="📊")
+            st.info("Rétention nominal",icon="📊")
             retention_join_leave_chart(db, start_date, end_date)
     
 
     # Metrics section
-    st.header("Server Overview")
+    st.header("Suivi abonnées")
     with stylable_container(
             key="container_dashboard",
             css_styles="""
@@ -194,23 +194,23 @@ with stylable_container(
         col1, col2,col3,col4,col5,col6 = st.columns(6,gap="medium")
 
         with col1:
-            st.info("Total Members",icon="📊")
+            st.info("Nombre d'abonnées",icon="📊")
             members_with_role_chart(db, "・ Membre Elite")
         with col2:
-            st.info("Online Members",icon="📊")
+            st.info("Abonnées actifs",icon="📊")
             active_members_chart(db,role=1233876743928942783)
         sub,delta_sub,unsub,delta_unsub = sub_unsub_chart(db, start_date, end_date)
         with col3:
-            st.info("Server Traffic",icon="📊")
+            st.info("Flux d'abonnées",icon="📊")
             st.metric(label="Sub",value=sub,delta=delta_sub)
         with col4:
-            st.info("Server Traffic",icon="📊")
+            st.info("Flux d'abonnées",icon="📊")
             st.metric(label="Unsub",value=(unsub*(-1)),delta=(delta_unsub*(-1)))
         with col5:
-            st.info("Server Retention",icon="📊")
+            st.info("Rétention temporelle",icon="📊")
             retention_7_14_chart(db, start_date, end_date)
         with col6:
-            st.info("Server Retention",icon="📊")
+            st.info("Rétention nominal",icon="📊")
             retention_join_leave_chart(db, start_date, end_date)
 
     
@@ -229,22 +229,22 @@ with stylable_container(
             st.text("")
             st.text("")
 
-            st.info("Members w/ Role",icon="📊")
+            st.info("Membre par role",icon="📊")
             role_name = st.selectbox("", roles, key="role")
             members_with_role_chart(db, st.session_state['role'])
             st.text("")
             st.text("")
             st.text("")
 
-            st.info("Role distribution",icon="📊")
-            selected_roles = st.multiselect("Select Roles to Include in Pie Chart", roles, key="pie_chart_roles")
+            st.info("Distribution des roles",icon="📊")
+            selected_roles = st.multiselect("Ajoutez un role au graphique", roles, key="pie_chart_roles")
             role_distribution_chart(db, st.session_state['pie_chart_roles'])
     # Activity section
     with col5:
         
         joined_across_time_chart(db, start_date, end_date, granularity)
         channel_activity_line_chart(db, start_date, end_date, granularity)
-        top_n = st.slider("Select number of top channels", 5, 20, 10)
+        top_n = st.slider("Nombre de channels", 5, 20, 10)
         top_channels_bar_chart(db, start_date, end_date, top_n)
 
     # Role Distribution section
