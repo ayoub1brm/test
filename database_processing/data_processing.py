@@ -69,6 +69,16 @@ def get_join_and_leave_stats(db,start_date=None, end_date=None):
     else:
         return joined_members, left_count
 
+def get_actual_member_left(db,start_date=None, end_date=None):
+    db_left_members = db.get_members_left(start_date, end_date)
+    if db_left_members:
+        return db_left_members
+    else:
+        joined_members = db.get_joined_since(start_date, end_date)
+        current_members = db.get_current_members(start_date, end_date)
+        left_count = joined_members-current_members
+        return joined_members, left_count
+
 def get_joined_across_time(db,start_date, end_date, granularity):
     welcome_messages = db.get_welcome_messages_between_dates(start_date, end_date)
     data = pd.DataFrame(welcome_messages, columns=['member_id', 'timestamp'])
