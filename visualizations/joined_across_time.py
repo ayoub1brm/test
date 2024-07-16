@@ -16,13 +16,13 @@ def joined_across_time_chart(db,start_date, end_date,granularity):
         mode='lines',
         line=dict(color='darkblue'),
         fillcolor='lightblue',
-        name='Members Joined'
+        name='Nouveaux membres'
     ))
 
     fig.update_layout(
-        title='Members Joined Across Time',
-        xaxis_title='Time',
-        yaxis_title='Number of Members',
+        title='Nouveaux membres à traver le temps',
+        xaxis_title='Date/heure',
+        yaxis_title='Nombre de nouveaux membres',
         template='plotly_white'
     )
 
