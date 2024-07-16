@@ -167,10 +167,10 @@ with stylable_container(
         joined,delta_join,left,delta_left = joined_and_left_chart(db, start_date, end_date)
         with col3:
             st.info("Flux sur serveur",icon="📊")
-            st.metric(label="Joined",value=joined,delta=delta_join)
+            st.metric(label="Rejoint le serveur",value=joined,delta=delta_join)
         with col4:
             st.info("Flux sur serveur",icon="📊")
-            st.metric(label="Left",value=(left*(-1)),delta=(delta_left*(-1)))
+            st.metric(label="Quitte le serveur",value=(left*(-1)),delta=(delta_left*(-1)))
         with col5:
             st.info("Rétention temporelle",icon="📊")
             retention_7_14_chart(db, start_date, end_date)
@@ -202,10 +202,10 @@ with stylable_container(
         sub,delta_sub,unsub,delta_unsub = sub_unsub_chart(db, start_date, end_date)
         with col3:
             st.info("Flux d'abonnées",icon="📊")
-            st.metric(label="Sub",value=sub,delta=delta_sub)
+            st.metric(label="Nouveaux abonnements",value=sub,delta=delta_sub)
         with col4:
             st.info("Flux d'abonnées",icon="📊")
-            st.metric(label="Unsub",value=(unsub*(-1)),delta=(delta_unsub*(-1)))
+            st.metric(label="Résiliation d'abonnements",value=(unsub*(-1)),delta=(delta_unsub*(-1)))
         with col5:
             st.info("Rétention temporelle",icon="📊")
             retention_7_14_chart(db, start_date, end_date)
