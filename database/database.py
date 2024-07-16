@@ -153,12 +153,12 @@ class Database:
 
     def update_member_leave_date(self, member_id, leave_date):
         self.execute('''
-            UPDATE Members SET leave_date = ? WHERE member_id = ?
+            UPDATE Members SET leave_date = ? WHERE member_id = ? AND leave_date is NULL
         ''', (leave_date, member_id))
         
     def update_sub_leave_date(self, member_id, leave_date):
         self.execute('''
-            UPDATE Subscribers SET unsub_date = ? WHERE member_id = ?
+            UPDATE Subscribers SET unsub_date = ? WHERE member_id = ? AND unsub_date is NULL
         ''', (leave_date, member_id))
         
     def update_voice_activity_end_time(self, member_id, end_time):
