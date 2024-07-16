@@ -272,7 +272,7 @@ class Database:
         '''
         params = []
         if start_date and end_date:
-            query += ' AND leave_date BETWEEN ? AND ?'
+            query += ' AND join_date BETWEEN ? AND ?'
             params.extend([start_date, end_date])
         cursor = self.execute(query, params)
         return cursor.fetchone()[0]
