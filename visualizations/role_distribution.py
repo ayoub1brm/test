@@ -25,7 +25,7 @@ def role_distribution_chart(db,selected_roles):
         labels = selected_roles + ["Other"]
         values = [member_counts[role_names.index(role)] for role in selected_roles if role in role_names] + [human_count - selected_count]
     else:
-        labels = ["All Human Members"]
+        labels = ["Membres du serveur"]
         values = [human_count]
         percentage = [100]
     
@@ -39,7 +39,7 @@ def role_distribution_chart(db,selected_roles):
     "legend": {"orient": "vertical", "left": "left",},
     "series": [
         {
-            "name": "Role Distribution",
+            "name": "Distibution des roles",
             "type": "pie",
             "radius": "50%",
             "data": data,
