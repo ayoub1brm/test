@@ -75,7 +75,7 @@ st.set_page_config(
 st.sidebar.image("logo_mc.png", use_column_width=False)
 time_range = st.sidebar.selectbox("Select Time Range", ["il y a 15 minutes", "il y a 1 heure", "il y a 3 heures", "il y a 24 heures", "il y a 7 jours", "il y a 1 mois", "il y a 6 mois", "il y a 1 ans","il y a 2 ans", "Personnaliser"])
 end_date = datetime.now(pytz.timezone('Europe/Paris'))
-if time_range == ""il y a 15 minutes"":
+if time_range == "il y a 15 minutes":
     start_date = end_date - timedelta(minutes=15)
     granularity = 'second'
 elif time_range == "il y a 1 heure":
