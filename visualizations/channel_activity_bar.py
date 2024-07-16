@@ -7,6 +7,6 @@ import pandas as pd
 def top_channels_bar_chart(db,start_date, end_date,top_n):
     df = get_message_activity_bar(db,start_date, end_date, top_n)
     
-    fig = px.bar(df, x='message_count', y='channel_name', orientation='h', title='Top Channels by Message Activity')
+    fig = px.bar(df, x='message_count', y='channel_name', orientation='h', title=f"Top {top_n} des channels avec le plus de messages")
     
     st.plotly_chart(fig)
