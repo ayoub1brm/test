@@ -180,7 +180,7 @@ class Database:
 
     def get_total_member_count(self):
         cursor = self.execute('''
-            SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id) WHERE leave_date is NULL AND is_bot = 0
+            SELECT COUNT(*) FROM (SELECT * FROM Members GROUP BY member_id, join_date) WHERE leave_date is NULL AND is_bot = 0
         ''')
         return cursor.fetchone()[0]
     
@@ -232,7 +232,7 @@ class Database:
     def get_current_members(self,start=None,end=None):
         params = []
         query = '''
-            SELECT COUNT(member_id) FROM (SELECT * FROM Members GROUP BY member_id)
+            SELECT COUNT(member_id) FROM (SELECT * FROM Members GROUP BY member_id, join_date)
             WHERE leave_date IS NULL
         '''
         if start and end:
@@ -267,12 +267,12 @@ class Database:
     def get_members_left(self, start_date=None, end_date=None):
         query = '''
             SELECT COUNT(*)
-            FROM (SELECT * FROM Members GROUP BY member_id)
+            FROM (SELECT * FROM Members GROUP BY member_id, join_date)
             WHERE leave_date is not NULL
         '''
         params = []
         if start_date and end_date:
-            query += ' AND join_date BETWEEN ? AND ?'
+            query += ' AND leave_date BETWEEN ? AND ?'
             params.extend([start_date, end_date])
         cursor = self.execute(query, params)
         return cursor.fetchone()[0]
